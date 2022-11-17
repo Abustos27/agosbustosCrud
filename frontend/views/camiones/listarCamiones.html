@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <title>lista Camiones</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center">Lista de Camiones</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Matricula</th>
+                            <th>Modelo</th>
+                            <th>Tipo</th>
+                            <th>Potencia</th>
+                        </tr>
+                    </thead>
+                    <tbody id="camiones">
+                        
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <a href="/camiones/crear" class="btn btn-primary">Agregar Camion</a>
+            </div>
+        </div>
+
+    </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function listarCamiones(){
+         
+    let listCamiones = [];
+    let url = 'http://localhost:3000/camiones';
+    fetch(url)
+        .then(data => data.json())
+        .then(camiones => {
+        listCamiones = camiones;
+        listCamiones.map((camion, i) => {
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${camion.matricula}</td>
+                <td>${camion.modelo}</td>
+                <td>${camion.tipo}</td>
+                <td>${camion.potencia}</td>
+                <td>
+                    <a href="/camiones/editar/${camion.matricula}" class="btn btn-warning">Editar</a>
+                   <td> <button class="btn btn-danger" onclick="eliminarCamion('${camion.matricula}')">Eliminar</button></td>
+                </td>
+            `;
+            document.getElementById('camiones').appendChild(row);
+})
+        })
+        .catch(err => console.log(err));
+   
+    });
+function getMatricula(){
+    const url = window.location.href;
+    const urlArray = url.split('/');
+    const matricula = urlArray[urlArray.length - 1];
+    return matricula;
+}
+
+function eliminarCamion(matricula){
+    let url = `http://localhost:3000/camiones/${matricula}`;
+    fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(data => data.json())
+    .then(camion => {
+        console.log(camion);
+        window.location.href = '/camiones';
+    })
+    .catch(err => console.log(err));
+    console.log(matricula);
+}
+
+</script>
+</html>

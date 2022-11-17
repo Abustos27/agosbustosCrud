@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+  <title>Editar Camionero</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="text-center">Editar Camionero</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <form action="/camioneros/editarCamionero" method="POST">
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" value="">
+          </div>
+          <div class="mb-3">
+            <label for="dni" class="form-label">DNI</label>
+            <input type="text" class="form-control" id="dni" name="dni" value="">
+          </div>
+          <div class="mb-3">
+            <label for="direccion" class="form-label">Direccion</label>
+            <input type="text" class="form-control" id="direccion" name="direccion" value="">
+          </div>
+          <div class="mb-3">
+            <label for="telefono" class="form-label">Telefono</label>
+            <input type="text" class="form-control" id="telefono" name="telefono" value="">
+          </div>
+          <div class="mb-3">
+            <label for="salario" class="form-label">Salario</label>
+            <input type="text" class="form-control" id="salario" name="salario" value="">
+          </div>
+          <div class="mb-3">
+            <label for="poblacion" class="form-label">Poblacion</label>
+            <input type="text" class="form-control" id="poblacion" name="poblacion" value="">
+          </div>
+          <!--boton editar-->
+          <button type="button" class="btn btn-primary" onclick="editarCamionero()" id="agregar">Editar</button>
+      </div>
+
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+      <script>
+         function getDniCamionero() {
+            const url = window.location.href;
+            const urlArray = url.split('/');
+            const dni = urlArray[urlArray.length - 1];
+            return dni;
+            console.log(dni);
+          }
+        function editarCamionero(){
+            let id = getDniCamionero();
+            let url = `http://localhost:3000/camioneros/edit/${id}`;
+            const nombre = document.getElementById('nombre');
+            const dni = document.getElementById('dni');
+            const direccion = document.getElementById('direccion');
+            const telefono = document.getElementById('telefono');
+            const salario = document.getElementById('salario');
+            const poblacion = document.getElementById('poblacion');
+
+            const data = {
+              'nombre': nombre.value,
+              'dni': dni.value,
+              'direccion': direccion.value,
+              'telefono': telefono.value,
+              'salario': salario.value,
+              'poblacion': poblacion.value
+            }
+
+            fetch(url, {
+              method: 'PUT',
+              body: JSON.stringify(data),
+              headers: {
+                'Content-Type': 'application/json'
+              },
+            })
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+                location.href = '/camioneros';
+              })
+              .catch(error => console.log(error));
+          }
+          
+
+        document.addEventListener('DOMContentLoaded', function () {
+          
+
+          function getCamionero() {
+            let id = getDniCamionero();
+            let url = `http://localhost:3000/camioneros/${id}`;
+            fetch(url)
+              .then(response => { return response.json() })
+              .then(data => {
+                document.getElementById("dni").value = data.dni;
+                document.getElementById("nombre").value = data.nombre;
+                document.getElementById("telefono").value = data.telefono;
+                document.getElementById("direccion").value = data.direccion;
+                document.getElementById("salario").value = data.salario;
+                document.getElementById("poblacion").value = data.poblacion;
+
+              })
+              .catch(error => console.log(error));
+          }
+
+
+
+          getCamionero();
+          
+          getDniCamionero();
+        }); 
+      </script>
+</body>
+
+</html>

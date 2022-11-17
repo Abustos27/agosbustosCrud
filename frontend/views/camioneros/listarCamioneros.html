@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <title>lista Camioneros</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center">Lista de Camioneros</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>DNI</th>
+                            <th>Nombre</th>
+                            <th>Telefono</th>
+                            <th>Direccion</th>
+                            <th>Salario</th>
+                            <th>Poblacion</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="camioneros">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <a href="/camioneros/crear" class="btn btn-primary">Agregar Camionero</a>
+            </div>
+        </div>
+
+    </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+</body>
+<script src="/js/camioneros.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javaScript">
+   document.addEventListener('DOMContentLoaded', function listarCamioneros() {
+    let listCamioneros = [];
+    let url = 'http://localhost:3000/camioneros';
+    fetch(url)
+        .then(data => data.json())
+        .then(camioneros => {
+        listCamioneros = camioneros;
+        listCamioneros.map((camionero, i) => {
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${camionero.dni}</td>
+                <td>${camionero.nombre}</td>
+                <td>${camionero.telefono}</td>
+                <td>${camionero.direccion}</td>
+                <td>${camionero.salario}</td>
+                <td>${camionero.poblacion}</td>
+                
+                <td>
+                    <a href="/camioneros/editar/${camionero.dni}" class="btn btn-warning">Editar</a>
+                    <button class="btn btn-danger" onclick="eliminarCamionero(${camionero.dni})">Eliminar</button>
+                </td>
+            `;
+            document.getElementById('camioneros').appendChild(row);
+})
+        })
+        .catch(err => console.log(err));
+});
+
+
+function getDniCamionero() {
+ const url = window.location.href;
+    const urlArray = url.split('/');   
+    const dni = urlArray[urlArray.length - 1];
+    return dni;
+    console.log(dni);
+
+}
+
+
+function eliminarCamionero(dni) {
+    if(confirm("¿Está seguro que desea eliminar el camionero?")){
+    let url = `http://localhost:3000/camioneros/${dni}`;
+    fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            location.href = '/camioneros';
+        })
+        .catch(error => console.log(error));
+    }
+    alert("El camionero ha sido eliminado");
+}
+</script>
+</html>
